@@ -1,0 +1,64 @@
+<!-- templates/pistas/lista.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pistas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Pistas Deportivas</h3>
+        <a th:href="@{/web/pistas/nueva}" sec:authorize="hasRole('ADMIN')"
+           class="btn btn-success btn-sm">+ Nueva pista</a>
+    </div>
+
+    <!-- Buscador -->
+    <form th:action="@{/web/pistas}" method="get" class="d-flex mb-3 gap-2">
+        <input type="text" name="nombre" class="form-control" style="max-width:300px"
+               placeholder="Buscar por nombre..." th:value="${busqueda}">
+        <button class="btn btn-outline-primary">Buscar</button>
+        <a th:href="@{/web/pistas}" class="btn btn-outline-secondary">Limpiar</a>
+    </form>
+
+    <!-- Flash messages -->
+    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th><th>Nombre</th><th>Tipo</th><th>Ubicación</th>
+                <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${pistas}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.nombre}"></td>
+                <td><span class="badge bg-info text-dark" th:text="${p.tipo}"></span></td>
+                <td th:text="${p.ubicacion}"></td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/web/pistas/editar/{id}(id=${p.id})}"
+                       class="btn btn-warning btn-sm">Editar</a>
+                    <form th:action="@{/web/pistas/eliminar/{id}(id=${p.id})}"
+                          method="post" class="d-inline"
+                          onsubmit="return confirm('¿Eliminar esta pista?')">
+                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pistas)}">
+                <td colspan="5" class="text-center text-muted">No hay pistas registradas</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

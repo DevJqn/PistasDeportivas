@@ -1,0 +1,54 @@
+<!-- templates/reservas/ingresos.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresos por Pista</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4" style="max-width:600px">
+    <h4>Ingresos por Pista</h4>
+
+    <form th:action="@{/web/reservas/ingresos}" method="get" class="card p-3 mb-4">
+        <div class="mb-3">
+            <label class="form-label">Pista</label>
+            <select name="pistaId" class="form-select" required>
+                <option value="">-- Selecciona --</option>
+                <option th:each="p : ${pistas}"
+                        th:value="${p.id}" th:text="${p.nombre}"></option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label class="form-label">Fecha inicio</label>
+                <input type="date" name="inicio" class="form-control" required>
+            </div>
+            <div class="col">
+                <label class="form-label">Fecha fin</label>
+                <input type="date" name="fin" class="form-control" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Calcular</button>
+    </form>
+
+    <div th:if="${resultado}" class="card border-success">
+        <div class="card-header bg-success text-white">Resultado</div>
+        <div class="card-body">
+            <p><strong>Pista:</strong> <span th:text="${resultado.pistaNombre}"></span></p>
+            <p><strong>Período:</strong>
+                <span th:text="${resultado.fechaInicio} + ' → ' + ${resultado.fechaFin}"></span>
+            </p>
+            <h5 class="text-success">
+                Total ingresos:
+                <span th:text="${#numbers.formatDecimal(resultado.totalIngresos,1,2)} + ' €'"></span>
+            </h5>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

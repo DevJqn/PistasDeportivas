@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${accion} + ' usuario'">Usuario</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4" style="max-width:500px">
+
+    <h4 th:text="${accion} + ' usuario'"></h4>
+
+    <form th:action="${usuarioId != null}
+            ? @{/web/usuarios/editar/{id}(id=${usuarioId})}
+            : @{/web/usuarios/nuevo}"
+          th:object="${dto}" method="post">
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+
+            <input type="text"
+                   th:field="*{nombre}"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
+
+            <div class="invalid-feedback"
+                 th:errors="*{nombre}"></div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+
+            <input type="text"
+                   th:field="*{telefono}"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'">
+
+            <div class="invalid-feedback"
+                 th:errors="*{telefono}"></div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+
+            <input type="email"
+                   th:field="*{email}"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+
+            <div class="invalid-feedback"
+                 th:errors="*{email}"></div>
+        </div>
+
+        <!-- Password (solo visible al crear) -->
+        <div class="mb-3" th:if="${usuarioId == null}">
+            <label class="form-label">Contraseña</label>
+
+            <input type="password"
+                   th:field="*{password}"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+
+            <div class="invalid-feedback"
+                 th:errors="*{password}"></div>
+        </div>
+
+        <!-- Rol -->
+<div class="mb-3" sec:authorize="hasRole('ADMIN')">
+    <label class="form-label">Rol</label>
+
+    <select th:field="*{rol}"
+            class="form-select"
+            th:classappend="${#fields.hasErrors('rol')} ? 'is-invalid'">
+
+        <option value="">-- Selecciona --</option>
+
+        <!-- Iteramos sobre los roles como String -->
+        <option th:each="r : ${roles}"
+                th:value="${r}"
+                th:text="${r}"
+                th:selected="${dto.rol == r}">
+        </option>
+
+    </select>
+
+    <div class="invalid-feedback"
+         th:errors="*{rol}"></div>
+</div>
+
+        <div class="d-flex gap-2">
+            <button type="submit"
+                    class="btn btn-primary">
+                Guardar
+            </button>
+
+            <a th:href="@{/web/usuarios}"
+               class="btn btn-secondary">
+                Cancelar
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

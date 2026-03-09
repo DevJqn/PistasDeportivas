@@ -1,0 +1,53 @@
+<!-- templates/pistas/formulario.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${accion} + ' pista'">Pista</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4" style="max-width: 500px">
+    <h4 th:text="${accion} + ' pista'">Pista</h4>
+
+    <form th:action="${pistaId != null}
+                     ? @{/web/pistas/editar/{id}(id=${pistaId})}
+                     : @{/web/pistas/nueva}"
+          th:object="${dto}" method="post">
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" th:field="*{nombre}" class="form-control"
+                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tipo</label>
+            <select th:field="*{tipo}" class="form-select"
+                    th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                <option value="">-- Selecciona --</option>
+                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{tipo}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ubicación</label>
+            <input type="text" th:field="*{ubicacion}" class="form-control"
+                   th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{ubicacion}"></div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/web/pistas}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
